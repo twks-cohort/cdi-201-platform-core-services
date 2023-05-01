@@ -5,3 +5,5 @@ kubeconfig_*
 .python-version
 Pipfile.lock
 datadog/values.yaml
+grafana-agent/*.yaml
+.DS_Store

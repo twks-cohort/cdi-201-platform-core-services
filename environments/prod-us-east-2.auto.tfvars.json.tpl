@@ -1,8 +1,4 @@
 {
-    "aws_region": "us-east-2",
-    "aws_assume_role": "DPSPlatformEksBaseRole",
-    "aws_account_id": "{{ op://empc-lab/cohort-base-aws-1/aws-account-id }}",
-
     "cluster_name": "nonprod-us-east-2",
 
     "cluster_autoscaler_version": "v1.22.2",
