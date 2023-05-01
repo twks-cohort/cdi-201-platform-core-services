@@ -1,0 +1,360 @@
+---
+version: 2.1
+
+orbs:
+  terraform: twdps/terraform@0.6.0
+  kube: twdps/kube-ops@0.2.0
+  op: twdps/onepassword@1.0.0
+  do: twdps/pipeline-events@0.1.0
+
+# ==== global pipeline parameters
+
+parameters:
+  context:
+    description: circleci context for all jobs
+    type: string
+    default: twdps-core-labs-team
+  terraform-version:
+    description: terraform version for all jobs
+    type: string
+    default: "1.2.2"
+  executor-image:
+    description: image to use for local jobs
+    type: string
+    default: twdps/circleci-kube-ops:alpine-stable
+
+# ==== triggers
+
+on-push-main: &on-push-main
+  branches:
+    only: /main/
+  tags:
+    ignore: /.*/
+
+on-tag-main: &on-tag-main
+  branches:
+    ignore: /.*/
+  tags:
+    only: /.*/
+
+commands:
+
+  set-environment:
+    description: generate environment credentials and configuration from templates
+    parameters:
+      cluster:
+        description: cluster environment
+        type: string
+      source-env:
+        description: .env file to source into BASH_ENV
+        type: string
+    steps:
+      - op/env:
+          env-file: << parameters.source-env >>
+      - run:
+          name: set ~/.terraformrc
+          command: op inject -i tpl/terraformrc.tpl -o ~/.terraformrc
+      - run:
+          name: set << parameters.cluster >> environment variables
+          command: |
+            op inject -i environments/<< parameters.cluster >>.auto.tfvars.json.tpl -o << parameters.cluster >>.auto.tfvars.json
+
+  set-kubeconfig:
+    parameters:
+      cluster:
+        description: cluster to configure
+        type: string
+    steps:
+      - run:
+          name: setup kubeconfig
+          command: |
+            mkdir -p ~/.kube
+            ENV=<< parameters.cluster >> op inject -i tpl/kubeconfig.tpl -o ~/.kube/config
+
+jobs:
+
+  deploy-core-services:
+    docker:
+      - image: << pipeline.parameters.executor-image >>
+    shell: << parameters.shell >>
+    parameters:
+      cluster:
+        description: cluster to configure
+        type: string
+      shell:
+        description: shell option directive
+        type: string
+        default: /bin/bash -eo pipefail
+      source-env:
+        description: .env file to source into BASH_ENV
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker
+      - kube/packages:
+          terraform-version: << pipeline.parameters.terraform-version >>
+      - set-environment:
+          cluster: << parameters.cluster >>
+          source-env: << parameters.source-env >>
+      - set-kubeconfig:
+          cluster: << parameters.cluster >>
+      - run:
+          name: deploy metrics-server
+          command: bash scripts/deploy_metrics_server.sh << parameters.cluster >>
+      - run:
+          name: deploy kube-state-metrics
+          command: bash scripts/deploy_kube_state_metrics.sh << parameters.cluster >>
+      - run:
+          name: deploy cluster-autoscaler
+          command: bash scripts/deploy_cluster_autoscaler.sh << parameters.cluster >>
+
+      # even with reverting to the v17 eks terraform module, efs-csi is still failing with error:
+      # failed to provision volume with StorageClass "efs-csi-test-storage-class": rpc error: code = Unauthenticated desc = Access Denied.
+      # I also tried reverting to a previsouly successful commit (tag) but still fails. Missing something obvioiusly probably.
+      # - run:
+      #     name: deploy aws-efs-csi-driver
+      #     command: bash scripts/deploy_efs_csi_driver.sh << parameters.cluster >>
+
+      # - run:
+      #     name: deploy datadog agents
+      #     command: bash scripts/deploy_datadog_agent.sh << parameters.cluster >>
+      # - do/circle-deploy
+#      - do/slack-webhook:
+#          message: cohort-base-platform-eks-core-services << parameters.cluster >> deployment
+#          webhook-url: $LAB_EVENTS_CHANNEL_WEBHOOK
+
+      # the provision of the efes location is commented out pending correction of above
+      - run:
+          name: deploy core-services-resources
+          command: bash scripts/deploy_core_service_resources.sh << parameters.cluster >>
+
+  validate-core-services:
+    docker:
+      - image: << pipeline.parameters.executor-image >>
+    shell: << parameters.shell >>
+    parameters:
+      cluster:
+        description: cluster to configure
+        type: string
+      shell:
+        description: shell option directive
+        type: string
+        default: /bin/bash -eo pipefail
+      source-env:
+        description: .env file to source into BASH_ENV
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker
+      - kube/packages:
+          terraform-version: << pipeline.parameters.terraform-version >>
+      - set-environment:
+          cluster: << parameters.cluster >>
+          source-env: << parameters.source-env >>
+      - set-kubeconfig:
+          cluster: << parameters.cluster >>
+      - run:
+          name: smoketest core services
+          command: bash scripts/validate_core_services.sh << parameters.cluster >>
+
+      # consistently have too many issues with this test. Need to workout a solid orb that can
+      # be adopted in lieu of self-management.
+      # - run:
+      #     name: conformance tests
+      #     command: bash scripts/sonobuoy_conformance_test.sh << parameters.cluster >> quick
+
+  # update-monitors:
+  #   parameters:
+  #     cluster:
+  #       description: cluster monitors to update
+  #       type: string
+  #     shell:
+  #       description: shell option directive
+  #       type: string
+  #       default: /bin/bash -eo pipefail
+  #     source-env:
+  #       description: .env file to source into BASH_ENV
+  #       type: string
+  #   docker:
+  #     - image: << pipeline.parameters.executor-image >>
+  #   shell: << parameters.shell >>
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - set-environment:
+  #         cluster: << parameters.cluster >>
+  #         source-env: << parameters.source-env >>
+  #     - run:
+  #         name: install requirements
+  #         command: pip install -r requirements.txt
+  #     - run:
+  #         name: update datadog cluster monitors
+  #         command: python scripts/deploy_monitors.py << parameters.cluster >> $(cat << parameters.cluster >>.auto.tfvars.json | jq -r .default_node_group_desired_size) $(cat << parameters.cluster >>.auto.tfvars.json | jq -r .alert_channel)
+
+
+  # update multi-cluster dashboard
+  # update-dashboard:
+  #   parameters:
+  #     shell:
+  #       description: shell option directive
+  #       type: string
+  #       default: /bin/bash -eo pipefail
+  #     source-env:
+  #       description: .env file to source into BASH_ENV
+  #       type: string
+  #   docker:
+  #     - image: << pipeline.parameters.executor-image >>
+  #   shell: << parameters.shell >>
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - set-environment:
+  #         cluster: nonprod-us-east-2
+  #         source-env: << parameters.source-env >>
+  #     - run:
+  #         name: install requirements
+  #         command: pip install -r requirements.txt
+  #     - run:
+  #         name: update cohort-base-platform-eks-core-services dashboard
+  #         command: bash scripts/deploy_dashboard.sh nonprod-us-east-2
+
+workflows:
+  version: 2
+
+  deploy nonprod-us-east-2 core services:
+    jobs:
+      - terraform/apply:
+          name: create nonprod-us-east-2 core service irsa roles
+          context: << pipeline.parameters.context >>
+          shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+          workspace: nonprod-us-east-2
+          terraform-version: << pipeline.parameters.terraform-version >>
+          before-terraform:
+            - set-environment:
+                cluster: nonprod-us-east-2
+                source-env: op.nonprod.env
+          filters: *on-push-main
+
+      - deploy-core-services:
+          name: deploy nonprod-us-east-2 core-services
+          context: << pipeline.parameters.context >>
+          shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+          source-env: op.nonprod.env
+          cluster: nonprod-us-east-2
+          requires:
+            - create nonprod-us-east-2 core service irsa roles
+          filters: *on-push-main
+
+      - validate-core-services:
+          name: validate nonprod-us-east-2 core services
+          context: << pipeline.parameters.context >>
+          shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+          source-env: op.nonprod.env
+          cluster: nonprod-us-east-2
+          requires:
+            - deploy nonprod-us-east-2 core-services
+          filters: *on-push-main
+
+#  release prod-us-east-1 core services:
+#    jobs:
+#      - terraform/apply:
+#          name: create prod-us-east-1 core service irsa roles
+#          context: << pipeline.parameters.context >>
+#          shell:  op run --env-file op.prod.env -- /bin/bash -eo pipefail
+#          workspace: prod-us-east-1
+#          terraform-version: << pipeline.parameters.terraform-version >>
+#          before-terraform:
+#            - set-environment:
+#                cluster: prod-us-east-1
+#                source-env: op.prod.env
+#          filters: *on-tag-main
+
+#      - deploy-core-services:
+#          name: release prod-us-east-1 core-services
+#          context: << pipeline.parameters.context >>
+#          shell:  op run --env-file op.prod.env -- /bin/bash -eo pipefail
+#          source-env: op.prod.env
+#          cluster: prod-us-east-1
+#          requires:
+#            - create prod-us-east-1 core service irsa roles
+#          filters: *on-tag-main
+
+#      - validate-core-services:
+#          name: validate prod-us-east-1 core services
+#          context: << pipeline.parameters.context >>
+#          shell:  op run --env-file op.prod.env -- /bin/bash -eo pipefail
+#          source-env: op.prod.env
+#          cluster: prod-us-east-1
+#          requires:
+#            - release prod-us-east-1 core-services
+#          filters: *on-tag-main
+
+  # generate-release-notes:
+  #   jobs:
+  #     - executor-tools/release:
+  #         name: release-cohort-base-platform-eks-core-services
+  #         context: << pipeline.parameters.context >>
+  #         shell: << pipeline.parameters.shell-options >>
+  #         filters: *on-tag-main
+
+  # deploy core service monitors:
+  #   jobs:
+  #     - update-monitors:
+  #         name: update nonprod-us-east-2 monitors
+  #         context: << pipeline.parameters.context >>
+  #         shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+  #         source-env: op.nonprod.env
+  #         cluster: nonprod-us-east-2
+  #         filters: *on-push-main
+
+  #     - approve prod-us-east-1 monitors release:
+  #         type: approval
+  #         requires:
+  #           - update nonprod-us-east-2 monitors
+  #         filters: *on-push-main
+
+  #     - update-monitors:
+  #         name: update prod-us-east-1 monitors
+  #         context: << pipeline.parameters.context >>
+  #         shell:  op run --env-file op.prod.env -- /bin/bash -eo pipefail
+  #         source-env: op.prod.env
+  #         cluster: prod-us-east-1
+  #         requires:
+  #           - approve prod-us-east-1 monitors release
+  #         filters: *on-push-main
+
+  # deploy core-services dashboard:
+  #   jobs:
+  #     - update-dashboard:
+  #         name: update eks-core-service dashboards
+  #         context: << pipeline.parameters.context >>
+  #         shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+  #         source-env: op.nonprod.env
+  #         filters: *on-push-main
+
+  nightly-validation:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - validate-core-services:
+          name: validate nonprod-us-east-2
+          context: << pipeline.parameters.context >>
+          shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+          source-env: op.nonprod.env
+          cluster: nonprod-us-east-2
+#      - validate-core-services:
+#          name: validate prod-us-east-1
+#          context: << pipeline.parameters.context >>
+#          shell:  op run --env-file op.prod.env -- /bin/bash -eo pipefail
+#          source-env: op.prod.env
+#          cluster: prod-us-east-1
+      # - update-dashboard:
+      #     name: refresh eks-core-service dashboard
+      #     shell:  op run --env-file op.nonprod.env -- /bin/bash -eo pipefail
+      #     source-env: op.nonprod.env
+      #     context: << pipeline.parameters.context >>

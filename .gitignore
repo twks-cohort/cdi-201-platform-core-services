@@ -1,0 +1,7 @@
+*.auto.tfvars.json
+kubeconfig_*
+.terraform
+.terraform.*
+.python-version
+Pipfile.lock
+datadog/values.yaml
