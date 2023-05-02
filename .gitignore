@@ -6,4 +6,6 @@ kubeconfig_*
 Pipfile.lock
 datadog/values.yaml
 grafana-agent/*.yaml
+metrics-server/*.yaml
 .DS_Store
+kubeconfig

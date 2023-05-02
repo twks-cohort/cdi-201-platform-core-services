@@ -22,7 +22,7 @@ def metrics_server_release_version():
 
 def kube_state_metrics_release_version():
     kube_state_metrics_release_url = "https://api.github.com/repos/prometheus-community/helm-charts/releases"
-    maximum_allowed_releases_per_page = "10"
+    maximum_allowed_releases_per_page = "20"
     r = requests.get(kube_state_metrics_release_url, params={"per_page": maximum_allowed_releases_per_page})
     kube_state_metrics_releases = json.loads(r.text)
 

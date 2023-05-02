@@ -1,9 +1,10 @@
 {
-    "cluster_name": "nonprod-us-east-2",
+    "org_name": "seanalvarez",
+    "cluster_name": "prod-us-east-2",
 
-    "cluster_autoscaler_version": "v1.22.2",
-    "metrics_server_version": "v0.6.1",
-    "kube_state_metrics_chart_version": "4.16.0",
-    "aws_efs_csi_driver_chart_version": "2.2.7",
-    "alert_channel": "nonprod"
+    "metrics_server_version": "v0.6.3",
+    "kube_state_metrics_chart_version": "5.6.0",
+    "node_exporter_version": "1.5.0",
+    "grafana_agent_version": "v0.33.1",
+    "alert_channel": "prod"
 }
