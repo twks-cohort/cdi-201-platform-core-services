@@ -107,7 +107,7 @@ jobs:
           command: bash scripts/deploy_node_exporter.sh << parameters.cluster >>
       - run:
           name: create grafana-system namespace
-          command: bash kubectl create namespace grafana-system
+          command: bash scripts/deploy_grafana_namespace.sh
       - run:
           name: deploy grafana-agent-metrics
           command: bash scripts/deploy_grafana_agent_metrics.sh << parameters.cluster >>
