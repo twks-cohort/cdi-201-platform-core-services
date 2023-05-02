@@ -20,7 +20,12 @@
   [[ "${output}" =~ "Running" ]]
 }
 
-@test "validate grafana-agent status" {
-  run bash -c "kubectl get po -n grafana-system -o wide | grep 'grafana-agent'"
+@test "validate grafana-agent metrics status" {
+  run bash -c "kubectl get po -n grafana-system -o wide | grep 'grafana-agent-0'"
+  [[ "${output}" =~ "Running" ]]
+}
+
+@test "validate grafana-agent logs status" {
+  run bash -c "kubectl get po -n grafana-system -o wide | grep 'grafana-agent-logs'"
   [[ "${output}" =~ "Running" ]]
 }
