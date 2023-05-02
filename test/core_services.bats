@@ -29,3 +29,8 @@
   run bash -c "kubectl get po -n grafana-system -o wide | grep 'grafana-agent-logs'"
   [[ "${output}" =~ "Running" ]]
 }
+
+@test "validate grafana-agent traces status" {
+  run bash -c "kubectl get po -n grafana-system -o wide | grep 'grafana-agent-traces'"
+  [[ "${output}" =~ "Running" ]]
+}

@@ -114,6 +114,9 @@ jobs:
       - run:
           name: deploy grafana-agent-logs
           command: bash scripts/deploy_grafana_agent_logs.sh << parameters.cluster >>
+      - run:
+          name: deploy grafana-agent-logs
+          command: bash scripts/deploy_grafana_agent_traces.sh << parameters.cluster >>
 
   validate-core-services:
     docker:
