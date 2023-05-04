@@ -177,7 +177,7 @@ jobs:
           command: pip install -r requirements.txt
       - run:
           name: update core-services alerts
-          command: bash scripts/deploy_alerts.py prod-us-east-2
+          command: python scripts/deploy_alerts.py prod-us-east-2
 
   update-dashboards:
     parameters:
@@ -202,7 +202,7 @@ jobs:
           command: pip install -r requirements.txt
       - run:
           name: update core-services dashboards
-          command: bash scripts/deploy_dashboards.py prod-us-east-2
+          command: python scripts/deploy_dashboards.py prod-us-east-2
 
 workflows:
   version: 2

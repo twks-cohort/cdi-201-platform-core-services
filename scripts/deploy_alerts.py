@@ -5,13 +5,14 @@ from xmlrpc.server import CGIXMLRPCRequestHandler
 
 import requests
 
-base_url = "https://team0201stack.grafana.net/api/v1/{resource}"
+base_url = "https://team0201stack.grafana.net/api/v1/provisioning/{resource}"
 headers = {
     "Accept": "application/json",
     "Content-Type": "application/json",
     "Authorization": f'Bearer {os.getenv("STACK_MANAGEMENT_TOKEN")}'
 }
-contact_url = base_url.format(resource="provisioning/contact-points")
+contact_url = base_url.format(resource="contact-points")
+notification_policy_url = base_url.format(resource="policies")
 
 def update_contact_point(url, headers, body_json):
     contact_exists = False
@@ -34,4 +35,10 @@ def update_contact_point(url, headers, body_json):
         response = requests.post(url=url, headers=headers, json=body_json)
         response.raise_for_status()
 
+def update_notification_policy(url, headers, body_json):
+    response = requests.put(url=url, headers=headers, json=body_json)
+    response.raise_for_status()
+
+
 update_contact_point(contact_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alerts/contact-point.json')))))
+update_notification_policy(notification_policy_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alerts/notification-policy.json')))))
