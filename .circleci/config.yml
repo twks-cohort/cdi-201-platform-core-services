@@ -177,7 +177,7 @@ jobs:
           command: pip install -r requirements.txt
       - run:
           name: update core-services dashboards
-          command: bash scripts/deploy_dashboards.sh prod-us-east-2
+          command: bash scripts/deploy_dashboards.py prod-us-east-2
 
 workflows:
   version: 2
