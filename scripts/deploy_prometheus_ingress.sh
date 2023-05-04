@@ -14,15 +14,7 @@ kubectl wait --namespace monitoring \
 
 export INGRESS_HOST=$(kubectl get svc -n monitoring ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' )
 
-htpasswd -cb prometheus/auth admin $PROM_PASSWORD
-
-kubectl create secret -n monitoring generic basic-auth \
---save-config \
---dry-run=client \
---from-file=prometheus/auth -o yaml | \
-kubectl apply -f -
-
-cat <<EOF | kubectl apply -f -
+cat <<EOF > prometheus-ingress/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -49,3 +41,17 @@ spec:
             port:
               number: 80
 EOF
+
+htpasswd -cb prometheus-ingress/auth admin $PROM_PASSWORD
+
+cat <<EOF > prometheus-ingress/kustomization.yaml
+namespace: monitoring
+resources:
+- ingress.yaml
+secretGenerator:
+- name: basic-auth
+  files:
+  - auth
+EOF
+
+kubectl apply -k prometheus-ingress

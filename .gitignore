@@ -5,6 +5,8 @@ kubeconfig_*
 .python-version
 Pipfile.lock
 prometheus/*.yaml
+prometheus-ingress/*.yaml
+prometheus-ingress/auth
 grafana-agent/*.yaml
 metrics-server/*.yaml
 .DS_Store
