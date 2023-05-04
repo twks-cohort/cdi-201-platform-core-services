@@ -100,22 +100,19 @@ jobs:
           name: deploy metrics-server
           command: bash scripts/deploy_metrics_server.sh << parameters.cluster >>
       - run:
-          name: deploy kube-state-metrics
-          command: bash scripts/deploy_kube_state_metrics.sh << parameters.cluster >>
+          name: deploy prometheus stack
+          command: bash scripts/deploy_prometheus.sh
       - run:
-          name: deploy node-exporter
-          command: bash scripts/deploy_node_exporter.sh << parameters.cluster >>
+          name: deploy prometheus ingress
+          command: bash scripts/deploy_prometheus_ingress.sh
       - run:
           name: create grafana-system namespace
           command: bash scripts/deploy_grafana_namespace.sh
       - run:
-          name: deploy grafana-agent-metrics
-          command: bash scripts/deploy_grafana_agent_metrics.sh << parameters.cluster >>
-      - run:
           name: deploy grafana-agent-logs
           command: bash scripts/deploy_grafana_agent_logs.sh << parameters.cluster >>
       - run:
-          name: deploy grafana-agent-logs
+          name: deploy grafana-agent-traces
           command: bash scripts/deploy_grafana_agent_traces.sh << parameters.cluster >>
 
   validate-core-services:
@@ -144,6 +141,9 @@ jobs:
       - run:
           name: smoketest core services
           command: bash scripts/validate_core_services.sh << parameters.cluster >>
+      - run:
+          name: Write Prometheus endpoint
+          command: bash scripts/write_prometheus_data.sh
 
       # consistently have too many issues with this test. Need to workout a solid orb that can
       # be adopted in lieu of self-management.
@@ -172,6 +172,18 @@ workflows:
           cluster: prod-us-east-2
           requires:
             - deploy prod-us-east-2 core-services
+          filters: *on-push-main
+
+      - terraform/apply:
+          name: Create Grafana Prometheus Datasource
+          context: << pipeline.parameters.context >>
+          shell: op run --env-file op.env -- /bin/bash -eo pipefail
+          workspace: prod
+          terraform-version: << pipeline.parameters.terraform-version >>
+          before-terraform:
+            - set-environment:
+                cluster: prod-us-east-2
+                source-env: op.env
           filters: *on-push-main
 
 #  nightly-validation:

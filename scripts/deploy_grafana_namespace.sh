@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-kubectl create namespace grafana-system --dry-run=client -o yaml | kubectl apply -f -
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grafana-system
+EOF

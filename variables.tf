@@ -1,0 +1,11 @@
+variable "org_name" {}
+variable "cluster_name" {}
+variable "team_name" {}
+variable "stack_url" {}
+variable "stack_management_token" {}
+variable "prometheus_endpoint" {}
+variable "prometheus_password" {}
+variable "metrics_server_version" {}
+variable "prometheus_version" {}
+variable "grafana_agent_version" {}
+variable "alert_channel" {}

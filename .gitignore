@@ -4,8 +4,9 @@ kubeconfig_*
 .terraform.*
 .python-version
 Pipfile.lock
-datadog/values.yaml
+prometheus/*.yaml
 grafana-agent/*.yaml
 metrics-server/*.yaml
 .DS_Store
 kubeconfig
+prometheus/auth

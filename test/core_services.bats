@@ -10,18 +10,18 @@
   [[ "${output}" =~ "Running" ]]
 }
 
+@test "validate prometheus status" {
+  run bash -c "kubectl get po -n monitoring -o wide | grep 'prometheus-server'"
+  [[ "${output}" =~ "Running" ]]
+}
+
 @test "validate kube-state-metrics status" {
-  run bash -c "kubectl get po -n kube-system -o wide | grep 'kube-state-metrics'"
+  run bash -c "kubectl get po -n monitoring -o wide | grep 'kube-state-metrics'"
   [[ "${output}" =~ "Running" ]]
 }
 
 @test "validate node-exporter status" {
-  run bash -c "kubectl get po -n kube-system -o wide | grep 'node-exporter'"
-  [[ "${output}" =~ "Running" ]]
-}
-
-@test "validate grafana-agent metrics status" {
-  run bash -c "kubectl get po -n grafana-system -o wide | grep 'grafana-agent-0'"
+  run bash -c "kubectl get po -n monitoring -o wide | grep 'node-exporter'"
   [[ "${output}" =~ "Running" ]]
 }
 
