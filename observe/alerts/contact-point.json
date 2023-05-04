@@ -1,0 +1,10 @@
+{
+    "uid": "cohort-team-0-201-contact",
+    "name": "Cohort Team0-201",
+    "type": "email",
+    "settings": {
+        "addresses": "sean.alvarez@thoughtworks.com; 26201@thoughtworks.com",
+        "singleEmail": false
+    },
+    "disableResolveMessage": false
+}

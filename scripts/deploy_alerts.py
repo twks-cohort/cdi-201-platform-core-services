@@ -11,14 +11,27 @@ headers = {
     "Content-Type": "application/json",
     "Authorization": f'Bearer {os.getenv("STACK_MANAGEMENT_TOKEN")}'
 }
+contact_url = base_url.format(resource="provisioning/contact-points")
 
-def upsert_dashboard(dashboard_url, headers, dashboard_json):
-    response = requests.post(dashboard_url, headers=headers, json=dashboard_json)
+def update_contact_point(url, headers, body_json):
+    contact_exists = False
+
+    # First we have to see if the contact exists
+    response = requests.get(url=url, headers=headers)
     response.raise_for_status()
+    contacts= response.json()
+    for contact in contacts:
+        if contact["name"] == body_json["name"]:
+            contact_exists = True
+            break
 
-directory = os.fsencode("observe/dashboards")
+    # If the contact exists, we have to use PUT.  Otherwise we can POST
+    if contact_exists:
+        url = f'{url}/{body_json["uid"]}'
+        response = requests.put(url=url, headers=headers, json=body_json)
+        response.raise_for_status()
+    else:
+        response = requests.post(url=url, headers=headers, json=body_json)
+        response.raise_for_status()
 
-for file in os.listdir(directory):
-    filename = os.fsdecode(file)
-    if filename.endswith(".json"):
-        upsert_dashboard(base_url, headers, json.load(open(os.path.join(os.fsdecode(directory), filename))))
+update_contact_point(contact_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alerts/contact-point.json')))))

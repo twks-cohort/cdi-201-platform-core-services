@@ -154,6 +154,31 @@ jobs:
       #     name: conformance tests
       #     command: bash scripts/sonobuoy_conformance_test.sh << parameters.cluster >> quick
 
+  update-alerts:
+    parameters:
+      shell:
+        description: shell option directive
+        type: string
+        default: /bin/bash -eo pipefail
+      source-env:
+        description: .env file to source into BASH_ENV
+        type: string
+    docker:
+      - image: << pipeline.parameters.executor-image >>
+    shell: << parameters.shell >>
+    steps:
+      - checkout
+      - setup_remote_docker
+      - set-environment:
+          cluster: prod-us-east-2
+          source-env: << parameters.source-env >>
+      - run:
+          name: install requirements
+          command: pip install -r requirements.txt
+      - run:
+          name: update core-services alerts
+          command: bash scripts/deploy_alerts.py prod-us-east-2
+
   update-dashboards:
     parameters:
       shell:
@@ -223,6 +248,15 @@ workflows:
           source-env: op.env
           requires:
             - Create Grafana Prometheus Datasource
+          filters: *on-push-main
+
+      - update-alerts:
+          name: Deploy Grafana alerts
+          context: << pipeline.parameters.context >>
+          shell: op run --env-file op.env -- /bin/bash -eo pipefail
+          source-env: op.env
+          requires:
+            - Deploy Grafana dashboards
           filters: *on-push-main
 
 #  nightly-validation:
