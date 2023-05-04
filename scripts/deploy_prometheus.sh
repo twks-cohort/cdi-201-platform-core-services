@@ -123,7 +123,7 @@ server:
   image:
     repository: quay.io/prometheus/prometheus
     # if not set appVersion field from Chart.yaml is used
-    tag: ""
+    tag: "$PROMETHEUS_VERSION"
     # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
     digest: ""
     pullPolicy: IfNotPresent
@@ -1113,7 +1113,7 @@ extraManifests: []
 alertmanager:
   ## If false, alertmanager will not be installed
   ##
-  enabled: true
+  enabled: false
 
   persistence:
     size: 2Gi
@@ -1142,6 +1142,10 @@ prometheus-node-exporter:
 
   rbac:
     pspEnabled: false
+
+  services:
+    port: $NODE_EXPORTER_PORT
+    targetPort: $NODE_EXPORTER_PORT
 
   containerSecurityContext:
     allowPrivilegeEscalation: false
