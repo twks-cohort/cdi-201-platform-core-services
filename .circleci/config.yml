@@ -154,6 +154,31 @@ jobs:
       #     name: conformance tests
       #     command: bash scripts/sonobuoy_conformance_test.sh << parameters.cluster >> quick
 
+  update-dashboards:
+    parameters:
+      shell:
+        description: shell option directive
+        type: string
+        default: /bin/bash -eo pipefail
+      source-env:
+        description: .env file to source into BASH_ENV
+        type: string
+    docker:
+      - image: << pipeline.parameters.executor-image >>
+    shell: << parameters.shell >>
+    steps:
+      - checkout
+      - setup_remote_docker
+      - set-environment:
+          cluster: prod-us-east-2
+          source-env: << parameters.source-env >>
+      - run:
+          name: install requirements
+          command: pip install -r requirements.txt
+      - run:
+          name: update core-services dashboards
+          command: bash scripts/deploy_dashboards.sh prod-us-east-2
+
 workflows:
   version: 2
 
