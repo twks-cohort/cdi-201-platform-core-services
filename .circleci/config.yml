@@ -216,6 +216,15 @@ workflows:
             - validate nonprod-us-east-2 core services
           filters: *on-push-main
 
+      - update-dashboards:
+          name: Deploy Grafana dashboards
+          context: << pipeline.parameters.context >>
+          shell: op run --env-file op.env -- /bin/bash -eo pipefail
+          source-env: op.env
+          requires:
+            - Create Grafana Prometheus Datasource
+          filters: *on-push-main
+
 #  nightly-validation:
 #    triggers:
 #      - schedule:
