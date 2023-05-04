@@ -104,7 +104,7 @@ jobs:
           command: bash scripts/deploy_prometheus.sh
       - run:
           name: Install htpasswd
-          command: bash scripts/installhtpasswd.sh
+          command: bash scripts/install_htpasswd.sh
       - run:
           name: deploy prometheus ingress
           command: bash scripts/deploy_prometheus_ingress.sh
