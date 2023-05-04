@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 
-apk update
-apk add apache2-utils
+sudo apk update
+sudo apk add apache2-utils
