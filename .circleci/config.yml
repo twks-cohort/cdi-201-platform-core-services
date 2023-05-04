@@ -184,6 +184,8 @@ workflows:
             - set-environment:
                 cluster: prod-us-east-2
                 source-env: op.env
+          requires:
+            - validate nonprod-us-east-2 core services
           filters: *on-push-main
 
 #  nightly-validation:
