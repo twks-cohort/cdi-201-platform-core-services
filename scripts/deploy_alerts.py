@@ -11,6 +11,12 @@ headers = {
     "Content-Type": "application/json",
     "Authorization": f'Bearer {os.getenv("STACK_MANAGEMENT_TOKEN")}'
 }
+alert_headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Authorization": f'Bearer {os.getenv("STACK_MANAGEMENT_TOKEN")}',
+    "X-Disable-Provenance": "disabled"
+}
 contact_url = base_url.format(resource="contact-points")
 notification_policy_url = base_url.format(resource="policies")
 alert_url=base_url.format(resource="alert-rules")
@@ -55,6 +61,6 @@ directory = os.fsencode("observe/alerts")
 for file in os.listdir(directory):
     filename = os.fsdecode(file)
     if filename.endswith(".json"):
-        upsert_record(alert_url, headers, json.load(open(os.path.join(os.fsdecode(directory), filename))))
+        upsert_record(alert_url, alert_headers, json.load(open(os.path.join(os.fsdecode(directory), filename))))
 
 print("Alerts deployed successfully")
