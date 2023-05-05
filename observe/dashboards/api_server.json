@@ -5,8 +5,8 @@
         {
           "builtIn": 1,
           "datasource": {
-            "type": "datasource",
-            "uid": "grafana"
+            "type": "prometheus",
+            "uid": "pe-prometheus-datasource"
           },
           "enable": true,
           "hide": true,
@@ -30,7 +30,7 @@
         "dashLength": 10,
         "dashes": false,
         "datasource": {
-          "uid": "$datasource"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -75,7 +75,7 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "sum(rate(apiserver_request_total[5m])) by (verb)",
             "legendFormat": "{{verb}}",
@@ -120,7 +120,7 @@
         "dashLength": 10,
         "dashes": false,
         "datasource": {
-          "uid": "$datasource"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -165,7 +165,7 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.95, sum(rate(workqueue_queue_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p95",
@@ -173,7 +173,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.90, sum(rate(workqueue_queue_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p90",
@@ -181,7 +181,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.5, sum(rate(workqueue_queue_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p50",
@@ -225,7 +225,7 @@
         "dashLength": 10,
         "dashes": false,
         "datasource": {
-          "uid": "$datasource"
+          "uid": "pe-prometheus-datasource"
         },
         "description": "95th percentile request latency for Kubernetes apiserver component",
         "fieldConfig": {
@@ -271,7 +271,7 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.95, sum(rate(apiserver_request_duration_seconds_bucket{verb!~\"CONNECT|WATCH\"}[5m])) by (le))",
             "legendFormat": "p95",
@@ -279,7 +279,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.90, sum(rate(apiserver_request_duration_seconds_bucket{verb!~\"CONNECT|WATCH\"}[5m])) by (le))",
             "legendFormat": "p90",
@@ -287,7 +287,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.5, sum(rate(apiserver_request_duration_seconds_bucket{verb!~\"CONNECT|WATCH\"}[5m])) by (le))",
             "legendFormat": "p50 ",
@@ -331,7 +331,7 @@
         "dashLength": 10,
         "dashes": false,
         "datasource": {
-          "uid": "$datasource"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -376,7 +376,7 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.95, sum(rate(workqueue_work_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p95",
@@ -384,7 +384,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.9, sum(rate(workqueue_work_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p90",
@@ -392,7 +392,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.5, sum(rate(workqueue_work_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p50",
@@ -436,7 +436,7 @@
         "dashLength": 10,
         "dashes": false,
         "datasource": {
-          "uid": "$datasource"
+          "uid": "pe-prometheus-datasource"
         },
         "description": "etcd request latency (p95)",
         "fieldConfig": {
@@ -482,7 +482,7 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.95, sum(rate(etcd_request_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p95",
@@ -490,7 +490,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.90, sum(rate(etcd_request_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p90",
@@ -498,7 +498,7 @@
           },
           {
             "datasource": {
-              "uid": "$datasource"
+              "uid": "pe-prometheus-datasource"
             },
             "expr": "histogram_quantile(0.5, sum(rate(etcd_request_duration_seconds_bucket[5m])) by (le))",
             "legendFormat": "p50",
@@ -540,7 +540,10 @@
     "refresh": "",
     "schemaVersion": 38,
     "style": "dark",
-    "tags": [],
+    "tags": [
+      "PE-Team",
+      "Kubernetes"
+    ],
     "templating": {
       "list": [
         {
@@ -589,5 +592,7 @@
     "version": 1,
     "weekStart": ""
   },
+  "uid": "pe-api-server",
+  "folderUid": "pe-folder",
   "overwrite": true
 }

@@ -1,5 +1,5 @@
 provider "grafana" {
-  url = var.stack_url
+  url  = var.stack_url
   auth = var.stack_management_token
 }
 
@@ -10,6 +10,7 @@ resource "grafana_data_source" "prometheus" {
   is_default          = true
   basic_auth_enabled  = true
   basic_auth_username = "admin"
+  uid                 = "pe-prometheus-datasource"
 
   json_data_encoded = jsonencode({
     manageAlerts = false

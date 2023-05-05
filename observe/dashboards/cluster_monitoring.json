@@ -21,6 +21,7 @@
     "graphTooltip": 0,
     "links": [],
     "liveNow": false,
+    "uid": "pe-cluster-monitoring",
     "panels": [
       {
         "collapsed": false,
@@ -38,7 +39,7 @@
       {
         "datasource": {
           "type": "prometheus",
-          "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -121,7 +122,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_restarts_total{app_kubernetes_io_name=\"kube-state-metrics\"})",
@@ -132,7 +133,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_restarts_total{container=\"metrics-server\"})",
@@ -144,7 +145,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_restarts_total{container=\"grafana-agent-logs\"})",
@@ -156,7 +157,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_restarts_total{container=\"grafana-agent-traces\"})",
@@ -168,7 +169,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_restarts_total{container=\"prometheus-server\"})",
@@ -197,7 +198,7 @@
       {
         "datasource": {
           "type": "prometheus",
-          "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -274,7 +275,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_running{container=\"prometheus-server\"})",
@@ -285,7 +286,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "hide": false,
             "refId": "B"
@@ -297,7 +298,7 @@
       {
         "datasource": {
           "type": "prometheus",
-          "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -374,7 +375,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_running{container=\"grafana-agent-logs\"})",
@@ -385,7 +386,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "hide": false,
             "refId": "B"
@@ -397,7 +398,7 @@
       {
         "datasource": {
           "type": "prometheus",
-          "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+          "uid": "pe-prometheus-datasource"
         },
         "fieldConfig": {
           "defaults": {
@@ -474,7 +475,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
             "expr": "sum(kube_pod_container_status_running{container=\"grafana-agent-traces\"})",
@@ -485,7 +486,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "ade1591a-6cb9-484c-97a3-3e07aa6c0f4d"
+              "uid": "pe-prometheus-datasource"
             },
             "hide": false,
             "refId": "B"
@@ -498,7 +499,10 @@
     "refresh": "",
     "schemaVersion": 38,
     "style": "dark",
-    "tags": [],
+    "tags": [
+      "PE-Team",
+      "Kubernetes"
+    ],
     "templating": {
       "list": []
     },
@@ -510,9 +514,9 @@
     "timezone": "",
     "title": "Cohort platform-core-services Alerts",
     "id": null,
-    "uid": null,
     "version": 8,
     "weekStart": ""
   },
+  "folderUid": "pe-folder",
   "overwrite": true
 }

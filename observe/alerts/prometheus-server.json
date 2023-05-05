@@ -1,0 +1,128 @@
+{
+  "title": "Prometheus Monitor Instances Running",
+  "ruleGroup": "PETeam",
+  "orgID": 1,
+  "condition": "C",
+  "labels": {
+    "cluster": "pros-us-east-2",
+    "env": "prod",
+    "team": "PETeam"
+  },
+  "uid": "pe-prometheus-monitor",
+  "folderUID": "pe-folder",
+  "noDataState": "NoData",
+  "execErrState": "Error",
+  "for": "5m",
+  "dashboardUid": "pe-cluster-monitoring",
+  "panelId": 2,
+  "annotations": {
+    "__dashboardUid__": "pe-cluster-monitoring",
+    "__panelId__": "2"
+  },
+  "isPaused": false,
+  "data": [
+    {
+      "refId": "A",
+      "relativeTimeRange": {
+        "from": 21600,
+        "to": 0
+      },
+      "datasourceUid": "pe-prometheus-datasource",
+      "model": {
+        "editorMode": "builder",
+        "expr": "sum(kube_pod_container_status_running{container=\"prometheus-server\"})",
+        "interval": "",
+        "intervalMs": 15000,
+        "legendFormat": "__auto",
+        "maxDataPoints": 43200,
+        "range": true,
+        "refId": "A"
+      }
+    },
+    {
+      "refId": "B",
+      "relativeTimeRange": {
+        "from": 21600,
+        "to": 0
+      },
+      "datasourceUid": "__expr__",
+      "model": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "datasource": {
+            "type": "__expr__",
+            "uid": "__expr__"
+        },
+        "expression": "A",
+        "hide": false,
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "reducer": "max",
+        "refId": "B",
+        "type": "reduce"
+      }
+    },
+    {
+      "refId": "C",
+      "relativeTimeRange": {
+        "from": 21600,
+        "to": 0
+      },
+      "datasourceUid": "__expr__",
+      "model": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "datasource": {
+            "type": "__expr__",
+            "uid": "__expr__"
+        },
+        "expression": "B",
+        "hide": false,
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "refId": "C",
+        "type": "threshold"
+      }
+    }
+  ]
+}

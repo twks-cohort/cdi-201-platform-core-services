@@ -22,3 +22,5 @@ for file in os.listdir(directory):
     filename = os.fsdecode(file)
     if filename.endswith(".json"):
         upsert_dashboard(base_url, headers, json.load(open(os.path.join(os.fsdecode(directory), filename))))
+
+print("Dashboards deployed successfully")

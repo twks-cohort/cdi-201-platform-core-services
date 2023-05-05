@@ -13,21 +13,28 @@ headers = {
 }
 contact_url = base_url.format(resource="contact-points")
 notification_policy_url = base_url.format(resource="policies")
+alert_url=base_url.format(resource="alert-rules")
 
-def update_contact_point(url, headers, body_json):
-    contact_exists = False
+def upsert_record(url, headers, body_json):
+    record_exists = False
 
     # First we have to see if the contact exists
     response = requests.get(url=url, headers=headers)
     response.raise_for_status()
-    contacts= response.json()
-    for contact in contacts:
-        if contact["name"] == body_json["name"]:
-            contact_exists = True
-            break
+    records= response.json()
+    for record in records:
+        if "name" in record:
+            if record["name"] == body_json["name"]:
+                record_exists = True
+                break
+        else:
+            if "title" in record:
+                if record["title"] == body_json["title"]:
+                    record_exists = True
+                    break
 
-    # If the contact exists, we have to use PUT.  Otherwise we can POST
-    if contact_exists:
+    # If the record exists, we have to use PUT.  Otherwise we can POST
+    if record_exists:
         url = f'{url}/{body_json["uid"]}'
         response = requests.put(url=url, headers=headers, json=body_json)
         response.raise_for_status()
@@ -35,10 +42,19 @@ def update_contact_point(url, headers, body_json):
         response = requests.post(url=url, headers=headers, json=body_json)
         response.raise_for_status()
 
-def update_notification_policy(url, headers, body_json):
+def post_record(url, headers, body_json):
     response = requests.put(url=url, headers=headers, json=body_json)
     response.raise_for_status()
 
+#contacts
+upsert_record(contact_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alert-policy/contact-point.json')))))
+#notification_policies
+post_record(notification_policy_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alert-policy/notification-policy.json')))))
+#alerts
+directory = os.fsencode("observe/alerts")
+for file in os.listdir(directory):
+    filename = os.fsdecode(file)
+    if filename.endswith(".json"):
+        upsert_record(alert_url, headers, json.load(open(os.path.join(os.fsdecode(directory), filename))))
 
-update_contact_point(contact_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alerts/contact-point.json')))))
-update_notification_policy(notification_policy_url, headers, json.load(open(os.path.join(os.fsdecode('observe/alerts/notification-policy.json')))))
+print("Alerts deployed successfully")
