@@ -57,8 +57,10 @@ data:
             - source_labels:
                 - __meta_kubernetes_pod_node_name
               target_label: __host__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
             - action: replace
-              replacement: $1
+              replacement: \$1
               separator: /
               source_labels:
                 - __meta_kubernetes_namespace
@@ -76,10 +78,11 @@ data:
               source_labels:
                 - __meta_kubernetes_pod_container_name
               target_label: container
-            - replacement: /var/log/pods/*$1/*.log
+            - replacement: /var/log/pods/*$1*/$2/*.log
+              regex: "(.*)/(.*)"
               separator: /
               source_labels:
-                - __meta_kubernetes_pod_uid
+                - __meta_kubernetes_pod_name
                 - __meta_kubernetes_pod_container_name
               target_label: __path__
 
@@ -156,7 +159,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: grafana-agent-logs
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           name: http-metrics
         securityContext:
           privileged: true

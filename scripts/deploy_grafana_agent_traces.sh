@@ -40,7 +40,7 @@ data:
             - basic_auth:
                 password: $GRAFANA_METRICS_API_KEY
                 username: $GRAFANA_STACK_TRACES_USERNAME
-              endpoint: $GRAFANA_STACK_TRACES_ENDPOINT
+              endpoint: "${GRAFANA_STACK_TRACES_ENDPOINT}:443"
               retry_on_failure:
                 enabled: false
           scrape_configs:
