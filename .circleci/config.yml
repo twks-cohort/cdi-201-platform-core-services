@@ -101,16 +101,16 @@ jobs:
           command: bash scripts/deploy_metrics_server.sh << parameters.cluster >>
       - run:
           name: deploy prometheus stack
-          command: bash scripts/deploy_prometheus.sh
+          command: bash scripts/deploy_prometheus.sh << parameters.cluster >>
       - run:
           name: Install htpasswd
-          command: bash scripts/install_htpasswd.sh
+          command: bash scripts/install_htpasswd.sh << parameters.cluster >>
       - run:
           name: deploy prometheus ingress
-          command: bash scripts/deploy_prometheus_ingress.sh
+          command: bash scripts/deploy_prometheus_ingress.sh << parameters.cluster >>
       - run:
           name: create grafana-system namespace
-          command: bash scripts/deploy_grafana_namespace.sh\
+          command: bash scripts/deploy_grafana_namespace.sh << parameters.cluster >>
       - run:
           name: deploy grafana-agent-events
           command: bash scripts/deploy_grafana_agent_events.sh << parameters.cluster >>
