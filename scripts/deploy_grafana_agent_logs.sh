@@ -78,7 +78,7 @@ data:
               source_labels:
                 - __meta_kubernetes_pod_container_name
               target_label: container
-            - replacement: /var/log/pods/*$1*/$2/*.log
+            - replacement: /var/log/pods/*\$1*/\$2/*.log
               regex: "(.*)/(.*)"
               separator: /
               source_labels:
