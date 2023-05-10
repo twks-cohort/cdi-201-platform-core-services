@@ -37,9 +37,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: prometheus-server
+            name: prometheus-kube-prometheus-prometheus
             port:
-              number: 80
+              number: 9090
 EOF
 
 htpasswd -cb prometheus-ingress/auth admin $PROM_PASSWORD

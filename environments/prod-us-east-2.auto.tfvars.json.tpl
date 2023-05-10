@@ -7,7 +7,7 @@
     "prometheus_endpoint": "{{ op://cohorts/team0-201-platform-vcluster/prometheus_endpoint }}",
     "prometheus_password": "{{ op://cohorts/team0-201-platform-vcluster/prometheus_password }}",
     "metrics_server_version": "v0.6.3",
-    "prometheus_version": "v2.43.0",
+    "prometheus_version": "v2.42.0",
     "grafana_agent_version": "v0.33.1",
     "alert_channel": "prod"
 }
