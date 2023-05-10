@@ -11,7 +11,7 @@
 }
 
 @test "validate prometheus status" {
-  run bash -c "kubectl get po -n monitoring -o wide | grep 'prometheus-server'"
+  run bash -c "kubectl get po -n monitoring -o wide | grep 'prometheus-prometheus-kube-prometheus-prometheus'"
   [[ "${output}" =~ "Running" ]]
 }
 
