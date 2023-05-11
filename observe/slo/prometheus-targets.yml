@@ -1,0 +1,36 @@
+apiVersion: sloth.slok.dev/v1
+kind: PrometheusServiceLevel
+metadata:
+  name: slo-prometheus-targets
+  namespace: monitoring
+  labels:
+    release: prometheus
+    team: platform-engineering
+    env: prod
+spec:
+  service: "prometheus-targets"
+  labels:
+    cluster: "prod-us-east-2"
+    component: "kubernetes"
+    team: "platform-engineering"
+  slos:
+    - name: "target-availability"
+      objective: 99.9
+      description: "Warn that we are not scraping active prometheus targets."
+      labels:
+        category: availability
+      sli:
+        plugin:
+          id: "sloth-common/prometheus/targets/availability"
+      alerting:
+        name: K8sApiserverAvailabilityAlert
+        labels:
+          category: "availability"
+        annotations:
+          summary: "Low availability detected"
+        pageAlert:
+          labels:
+            severity: critical
+        ticketAlert:
+          labels:
+            severity: warning

@@ -12,3 +12,4 @@ metrics-server/*.yaml
 .DS_Store
 kubeconfig
 prometheus/auth
+sloth/values.yaml

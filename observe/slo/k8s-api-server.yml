@@ -1,0 +1,63 @@
+apiVersion: sloth.slok.dev/v1
+kind: PrometheusServiceLevel
+metadata:
+  name: slo-k8s-api
+  namespace: monitoring
+  labels:
+    release: prometheus
+    team: platform-engineering
+    env: prod
+spec:
+  service: "k8s-apiserver"
+  labels:
+    cluster: "prod-us-east-2"
+    component: "kubernetes"
+    team: "platform-engineering"
+  slos:
+    - name: "requests-availability"
+      objective: 99.9
+      description: "Warn that we are returning correctly the requests to the clients (kubectl users, controllers...)."
+      labels:
+        category: availability
+      sli:
+        events:
+          errorQuery: sum(rate(apiserver_request_total{code=~"(5..|429)"}[{{.window}}]))
+          totalQuery: sum(rate(apiserver_request_total[{{.window}}]))
+      alerting:
+        name: K8sApiserverAvailabilityAlert
+        labels:
+          category: "availability"
+        annotations:
+          summary: "Low availability detected"
+        pageAlert:
+          labels:
+            severity: critical
+        ticketAlert:
+          labels:
+            severity: warning
+    - name: "requests-latency"
+      objective: 99
+      description: "Warn that we apiserver responses are being slow and this will affect the clients  (kubectl users, controllers...)."
+      labels:
+        category: latency
+      sli:
+        events:
+          errorQuery: |
+            (
+              sum(rate(apiserver_request_duration_seconds_count{verb!="WATCH"}[{{.window}}]))
+              -
+              sum(rate(apiserver_request_duration_seconds_bucket{le="0.4",verb!="WATCH"}[{{.window}}]))
+            )
+          totalQuery: sum(rate(apiserver_request_duration_seconds_count{verb!="WATCH"}[{{.window}}]))
+      alerting:
+        name: K8sApiserverLatencyAlert
+        labels:
+          category: "latency"
+        annotations:
+          runbook: "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubeapilatencyhigh"
+        pageAlert:
+          labels:
+            severity: critical
+        ticketAlert:
+          labels:
+            severity: warning
