@@ -278,7 +278,7 @@
               "uid": "pe-prometheus-datasource"
             },
             "editorMode": "builder",
-            "expr": "sum(kube_pod_container_status_running{container=\"prometheus-server\"})",
+            "expr": "sum(kube_pod_container_status_running{container=\"prometheus\"})",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A"

@@ -30,7 +30,7 @@
       "datasourceUid": "pe-prometheus-datasource",
       "model": {
         "editorMode": "builder",
-        "expr": "sum(kube_pod_container_status_running{container=\"prometheus-server\"})",
+        "expr": "sum(kube_pod_container_status_running{container=\"prometheus\"})",
         "interval": "",
         "intervalMs": 15000,
         "legendFormat": "__auto",
