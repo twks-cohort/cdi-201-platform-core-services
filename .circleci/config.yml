@@ -208,7 +208,7 @@ jobs:
           command: pip install -r requirements.txt
       - run:
           name: deploy PE dashboard folder
-          command: python scripts/deploy_grafana_folder.py prod-us-east-2
+          command: python scripts/deploy_grafana_folders.py prod-us-east-2
       - run:
           name: update core-services dashboards
           command: python scripts/deploy_dashboards.py prod-us-east-2

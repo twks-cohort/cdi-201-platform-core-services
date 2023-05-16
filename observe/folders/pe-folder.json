@@ -1,4 +1,5 @@
 {
     "uid": "pe-folder",
-    "title": "Platform Engineering"
+    "title": "Platform Engineering",
+    "overwrite": true
   }
