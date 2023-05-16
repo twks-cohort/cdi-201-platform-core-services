@@ -4,7 +4,7 @@
   "orgID": 1,
   "condition": "C",
   "labels": {
-    "cluster": "pros-us-east-2",
+    "cluster": "prod-us-east-2",
     "env": "prod",
     "team": "PETeam"
   },
