@@ -3,7 +3,7 @@
     "name": "Cohort Team##-201",
     "type": "email",
     "settings": {
-        "addresses": "[Team Email Addresses]",
+        "addresses": "email1@myteam.com; email2@myteam.com",
         "singleEmail": false
     },
     "disableResolveMessage": false
