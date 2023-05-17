@@ -9,7 +9,7 @@ prometheus-ingress/*.yaml
 prometheus-ingress/auth
 grafana-agent/*.yaml
 metrics-server/*.yaml
+sloth/*.yaml
 .DS_Store
 kubeconfig
 prometheus/auth
-sloth/values.yaml
