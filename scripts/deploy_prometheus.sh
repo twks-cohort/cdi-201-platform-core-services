@@ -3,6 +3,7 @@ set -e
 
 export CLUSTER=$1
 export PROMETHEUS_VERSION=$(cat $CLUSTER.auto.tfvars.json | jq -r .prometheus_version)
+export NODE_EXPORTER_PORT=$(cat $CLUSTER.auto.tfvars.json | jq -r .node_exporter_port)
 
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -1804,6 +1805,7 @@ prometheus-node-exporter:
     - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)\$
   service:
     portName: http-metrics
+    port: $NODE_EXPORTER_PORT
   prometheus:
     monitor:
       enabled: true
