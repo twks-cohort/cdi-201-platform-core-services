@@ -108,9 +108,12 @@ jobs:
       - run:
           name: deploy prometheus ingress
           command: bash scripts/deploy_prometheus_ingress.sh << parameters.cluster >>
-      - run:
-          name: deploy sloth
-          command: bash scripts/deploy_sloth.sh << parameters.cluster >>
+      #- run:
+      #    name: deploy sloth
+      #    command: bash scripts/deploy_sloth.sh << parameters.cluster >>
+      #- run:
+      #    name: deploy SLOs
+      #    command: bash -c "kubectl apply -n monitoring -f observe/slo --recursive"
       - run:
           name: create grafana-system namespace
           command: bash scripts/deploy_grafana_namespace.sh << parameters.cluster >>
