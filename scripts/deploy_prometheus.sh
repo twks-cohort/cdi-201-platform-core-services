@@ -1806,6 +1806,7 @@ prometheus-node-exporter:
   service:
     portName: http-metrics
     port: $NODE_EXPORTER_PORT
+    targetPort: $NODE_EXPORTER_PORT
   prometheus:
     monitor:
       enabled: true
